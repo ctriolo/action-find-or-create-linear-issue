@@ -9,9 +9,6 @@ on:
 
 permissions:
   pull-requests: write
-  issues: write
-  repository-projects: write
-  contents: write
 
 jobs:
   create-linear-issue-on-pull-request:
@@ -23,9 +20,8 @@ jobs:
       - name: Checkout action repo
         uses: actions/checkout@v3
       - name: (STEP) Find or Create the Linear Issue on Pull Request
-        id: createIssue
         uses: ./ # Uses an action in the root directory
         with:
-          github-token: ${{secrets.GITHUB-TOKEN}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           linear-api-key: ${{secrets.LINEAR_API_KEY}}
           linear-team-key: "CHR"

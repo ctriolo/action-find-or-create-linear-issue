@@ -9,6 +9,7 @@ inputs:
     required: true
   github-token:
     description: "GitHub token required to modify the PR title."
+    required: true
 outputs:
   linear-issue-id:
     description: "The Linear issue's unique identifier. (UUID)"
