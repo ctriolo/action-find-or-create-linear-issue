@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: Find or create a Linear Issue
         id: findIssue
-        uses: ctriolo/action-find-or-createlinear-issue@v1
+        uses: ctriolo/action-find-or-create-linear-issue@v1
         with:
           github-token: ${{secrets.GITHUB-TOKEN}}
           linear-api-key: ${{secrets.LINEAR_API_KEY}}
