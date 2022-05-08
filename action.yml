@@ -1,0 +1,69 @@
+name: "Find or Create Linear Issue and Prefix Pull Request Title"
+description: "Ensure's every Pull Request has a Linear Issue associated with it and is displayed prominately in the title."
+inputs:
+  linear-api-key:
+    description: "Linear API key generated from https://linear.app/settings/api"
+    required: true
+  linear-team-key:
+    description: "Team key (e.g. ENG) for the Linear issue to create."
+    required: true
+  github-token:
+    description: "GitHub token required to modify the PR title."
+outputs:
+  linear-issue-id:
+    description: "The Linear issue's unique identifier. (UUID)"
+    value: ${{ steps.find.outputs.linear-issue-id || steps.create.outputs.linear-issue-id}}
+  linear-issue-identifier:
+    description: "The Linear issue's human readable identifier. (e.g. `ENG-123`)"
+    value: ${{ steps.find.outputs.linear-issue-identifier || steps.create.outputs.linear-issue-identifier}}
+  linear-issue-number:
+    description: "The Linear issue's number. (e.g. the `123` of `ENG-123`)"
+    value: ${{ steps.find.outputs.linear-issue-number || steps.create.outputs.linear-issue-number}}
+  linear-issue-title:
+    description: "The Linear issue's title."
+    value: ${{ steps.find.outputs.linear-issue-title || steps.create.outputs.linear-issue-title}}
+  linear-issue-description:
+    description: "The Linear issue's description."
+    value: ${{ steps.find.outputs.linear-issue-description || steps.create.outputs.linear-issue-description}}
+  linear-issue-url:
+    description: "The Linear issue's URL. (e.g. `https://...`)"
+    value: ${{ steps.find.outputs.linear-issue-url || steps.create.outputs.linear-issue-url}}
+  linear-team-id:
+    description: "The Linear teams unique identifier. (UUID)"
+    value: ${{ steps.find.outputs.linear-team-id || steps.create.outputs.linear-team-id}}
+  linear-team-key:
+    description: "The Linear teams key/prefix (e.g. `ENG`)"
+    value: ${{ steps.find.outputs.linear-team-key || steps.create.outputs.linear-team-key}}
+  did-create:
+    description: "`true` if linear issue was created using this action. `false` otherwise."
+    value: ${{ steps.find.outcome == 'failure' && steps.create.outcome == 'success' }}
+runs:
+  using: "composite"
+  steps:
+    - name: Find the Linear Issue.
+      continue-on-error: true
+      id: find
+      uses: ctriolo/action-find-linear-issue@v0.1
+      with:
+        linear-api-key: ${{inputs.linear-api-key}}
+    - name: Create the Linear Issue if no identifier found.
+      id: create
+      if: ${{always() && steps.find.outcome == 'failure'}}
+      uses: ctriolo/action-create-linear-issue@v0.1
+      with:
+        linear-api-key: ${{inputs.linear-api-key}}
+        linear-team-key: ${{inputs.linear-team-key}}
+        linear-issue-title: ${{github.event.pull_request.title}}
+        linear-issue-description: ${{github.event.pull_request.body}}
+        linear-attachment-url: ${{github.event.pull_request.html_url}}
+        linear-attachment-title: "(#${{github.event.pull_request.number}}) ${{github.event.pull_request.title}}"
+    - name: Prepend the title with the Linear issue identifier.
+      # Not enforcing that the found or created task is at the start for in the case of multiple tasks in the title.
+      if: ${{!contains(steps.vars.outputs.pr_title, steps.find.outputs.linear-issue-identifier || steps.create.outputs.linear-issue-identifier)}}
+      env:
+        PR_URL: ${{github.event.pull_request.html_url}}
+        PR_TITLE: ${{github.event.pull_request.title}}
+        ISSUE_IDENTIFIER: ${{ steps.find.outputs.linear-issue-identifier || steps.create.outputs.linear-issue-identifier}}
+        GITHUB_TOKEN: ${{inputs.github-token}}
+      run: |
+        gh pr edit "$PR_URL" --title "$ISSUE_IDENTIFIER: $PR_TITLE"

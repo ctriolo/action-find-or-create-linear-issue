@@ -1,0 +1,25 @@
+name: Create Linear Issue on Pull Request
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    types: ["opened", "edited", "reopened", "synchronize"]
+
+jobs:
+  create-linear-issue-on-pull-request:
+    runs-on: ubuntu-latest
+    name: (JOB) Find or Create Linear Issue on Pull Request
+    steps:
+      # To use this repository's private action,
+      # you must check out the repository
+      - name: Checkout action repo
+        uses: actions/checkout@v3
+      - name: (STEP) Find or Create the Linear Issue on Pull Request
+        id: createIssue
+        uses: ./ # Uses an action in the root directory
+        with:
+          github-token: ${{secrets.GITHUB-TOKEN}}
+          linear-api-key: ${{secrets.LINEAR_API_KEY}}
+          linear-team-key: "CHR"
