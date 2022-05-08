@@ -59,7 +59,7 @@ runs:
         linear-attachment-title: "(#${{github.event.pull_request.number}}) ${{github.event.pull_request.title}}"
     - name: Prepend the title with the Linear issue identifier.
       # Not enforcing that the found or created task is at the start for in the case of multiple tasks in the title.
-      if: ${{!contains(steps.vars.outputs.pr_title, steps.find.outputs.linear-issue-identifier || steps.create.outputs.linear-issue-identifier)}}
+      if: ${{!contains(github.event.pull_request.title, steps.find.outputs.linear-issue-identifier || steps.create.outputs.linear-issue-identifier)}}
       shell: bash
       env:
         PR_URL: ${{github.event.pull_request.html_url}}
