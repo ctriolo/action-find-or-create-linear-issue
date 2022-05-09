@@ -42,6 +42,9 @@ on:
       - main
     types: ["opened", "edited", "reopened", "synchronize"]
 
+permissions:
+  pull-requests: write
+
 jobs:
   create-linear-issue-on-pull-request:
     runs-on: ubuntu-latest
