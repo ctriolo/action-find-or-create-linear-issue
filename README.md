@@ -5,6 +5,7 @@ This is a [Github Action](https://github.com/features/actions) that finds or cre
 This is helpful when you're:
 
 - Ensuring each Pull Request has a Linear Issue.
+  //comment
 
 ## Inputs
 
