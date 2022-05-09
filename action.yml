@@ -1,5 +1,9 @@
-name: "Find or Create Linear Issue and Prefix Pull Request Title"
-description: "Ensure's every Pull Request has a Linear Issue associated with it and is displayed prominately in the title."
+name: "Find or Create Linear Issue and Prefix PR"
+description: "Ensure's every Pull Request has a Linear Issue associated with it and is displayed prominently in the title."
+branding:
+  icon: "check-square"
+  color: "green"
+
 inputs:
   linear-api-key:
     description: "Linear API key generated from https://linear.app/settings/api"
@@ -10,6 +14,7 @@ inputs:
   github-token:
     description: "GitHub token required to modify the PR title."
     required: true
+
 outputs:
   linear-issue-id:
     description: "The Linear issue's unique identifier. (UUID)"
@@ -38,6 +43,7 @@ outputs:
   did-create:
     description: "`true` if linear issue was created using this action. `false` otherwise."
     value: ${{ steps.find.outcome == 'failure' && steps.create.outcome == 'success' }}
+
 runs:
   using: "composite"
   steps:
