@@ -50,7 +50,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Find or create a Linear Issue
-        id: findIssue
         uses: ctriolo/action-find-or-create-linear-issue@v1
         with:
           github-token: ${{secrets.GITHUB-TOKEN}}
