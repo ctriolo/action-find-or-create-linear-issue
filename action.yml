@@ -11,6 +11,10 @@ inputs:
   linear-team-key:
     description: "Team key (e.g. ENG) for the Linear issue to create."
     required: true
+  linear-created-issue-state-id:
+    description: "Team state ID for the created Linear issue."
+  linear-created-issue-title-prefix:
+    description: "Title prefix for the created Linear issue."
   github-token:
     description: "GitHub token required to modify the PR title."
     required: true
@@ -56,12 +60,13 @@ runs:
     - name: Create the Linear Issue if no identifier found.
       id: create
       if: ${{always() && steps.find.outcome == 'failure'}}
-      uses: ctriolo/action-create-linear-issue@v0.2
+      uses: ctriolo/action-create-linear-issue@v0.4
       with:
         linear-api-key: ${{inputs.linear-api-key}}
         linear-team-key: ${{inputs.linear-team-key}}
-        linear-issue-title: ${{github.event.pull_request.title}}
+        linear-issue-title: "${{inputs.linear-created-issue-title-prefix}}${{github.event.pull_request.title}}"
         linear-issue-description: ${{github.event.pull_request.body}}
+        linear-issue-state-id: ${{inputs.linear-created-issue-state-id}}
         linear-attachment-url: ${{github.event.pull_request.html_url}}
         linear-attachment-title: "(#${{github.event.pull_request.number}}) ${{github.event.pull_request.title}}"
     - name: Prepend the title with the Linear issue identifier.
