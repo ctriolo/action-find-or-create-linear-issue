@@ -60,7 +60,7 @@ runs:
     - name: Create the Linear Issue if no identifier found.
       id: create
       if: ${{always() && steps.find.outcome == 'failure'}}
-      uses: ctriolo/action-create-linear-issue@v0.3
+      uses: ctriolo/action-create-linear-issue@v0.4
       with:
         linear-api-key: ${{inputs.linear-api-key}}
         linear-team-key: ${{inputs.linear-team-key}}
