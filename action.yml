@@ -56,7 +56,7 @@ runs:
     - name: Find the Linear Issue.
       continue-on-error: true
       id: find
-      uses: ctriolo/action-find-linear-issue@v0.5
+      uses: ctriolo/action-find-linear-issue@v0.60
       with:
         linear-api-key: ${{inputs.linear-api-key}}
         linear-issue-label-ids: ${{inputs.linear-issue-label-ids}}
