@@ -15,6 +15,8 @@ inputs:
     description: "Team state ID for the created Linear issue."
   linear-created-issue-title-prefix:
     description: "Title prefix for the created Linear issue."
+  linear-issue-label-ids:
+    description: "Comma deliminated label ids"
   github-token:
     description: "GitHub token required to modify the PR title."
     required: true
@@ -54,13 +56,14 @@ runs:
     - name: Find the Linear Issue.
       continue-on-error: true
       id: find
-      uses: ctriolo/action-find-linear-issue@v0.2
+      uses: ctriolo/action-find-linear-issue@v0.5
       with:
         linear-api-key: ${{inputs.linear-api-key}}
+        linear-issue-label-ids: ${{inputs.linear-issue-label-ids}}
     - name: Create the Linear Issue if no identifier found.
       id: create
       if: ${{always() && steps.find.outcome == 'failure'}}
-      uses: ctriolo/action-create-linear-issue@v0.4
+      uses: ctriolo/action-create-linear-issue@v0.5
       with:
         linear-api-key: ${{inputs.linear-api-key}}
         linear-team-key: ${{inputs.linear-team-key}}
@@ -69,6 +72,7 @@ runs:
         linear-issue-state-id: ${{inputs.linear-created-issue-state-id}}
         linear-attachment-url: ${{github.event.pull_request.html_url}}
         linear-attachment-title: "(#${{github.event.pull_request.number}}) ${{github.event.pull_request.title}}"
+        linear-issue-label-ids: ${{inputs.linear-issue-label-ids}}
     - name: Prepend the title with the Linear issue identifier.
       # Not enforcing that the found or created task is at the start for in the case of multiple tasks in the title.
       if: ${{!contains(github.event.pull_request.title, steps.find.outputs.linear-issue-identifier || steps.create.outputs.linear-issue-identifier)}}
